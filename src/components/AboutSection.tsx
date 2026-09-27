@@ -1,308 +1,353 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  GraduationCap,
-  Award,
-  Terminal,
-  CheckCircle2,
-  Sparkles,
-  Briefcase,
-  MapPin,
-  Calendar,
-  ExternalLink,
   X,
-  Download,
+  GraduationCap,
+  Briefcase,
+  Award,
+  MapPin,
   ChevronRight,
+  ChevronLeft,
 } from 'lucide-react';
-import { certificationsData, experienceData } from '@/data/skills';
+import { getLocalizedCertifications, getLocalizedExperience } from '@/data/localizedData';
+import { useApp } from '@/context/AppContext';
+
+type Tab = 'profil' | 'pengalaman' | 'sertifikasi';
 
 export default function AboutSection() {
+  const { t, locale } = useApp();
+  const [tab, setTab] = useState<Tab>('profil');
   const [selectedCert, setSelectedCert] = useState<string | null>(null);
-  const activeCert = certificationsData.find((c) => c.id === selectedCert);
+
+  const certificationsData = getLocalizedCertifications(locale);
+  const experienceData     = getLocalizedExperience(locale);
+
+  const activeCert   = certificationsData.find((c) => c.id === selectedCert);
+  const currentIndex = certificationsData.findIndex((c) => c.id === selectedCert);
+
+  const handlePrevCert = () => {
+    const idx = currentIndex > 0 ? currentIndex - 1 : certificationsData.length - 1;
+    setSelectedCert(certificationsData[idx].id);
+  };
+  const handleNextCert = () => {
+    const idx = currentIndex < certificationsData.length - 1 ? currentIndex + 1 : 0;
+    setSelectedCert(certificationsData[idx].id);
+  };
+
+  const TABS: { id: Tab; label: string }[] = [
+    { id: 'profil',      label: t.about.tabs.profile                              },
+    { id: 'pengalaman',  label: t.about.tabs.experience                           },
+    { id: 'sertifikasi', label: `${t.about.tabs.certs} (${certificationsData.length})` },
+  ];
 
   return (
-    <section id="about" className="py-24 relative overflow-hidden bg-white/60">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF4F4] border border-[#A4C3B2] text-[#3D5449] text-xs font-semibold uppercase tracking-wider mb-3"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#6B9080]" />
-            <span>Tentang Saya</span>
-          </motion.div>
+    <section id="about" className="py-24" style={{ background: 'var(--surface)' }}>
+      <div className="container-xl">
 
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl sm:text-4xl font-extrabold text-[#1C2B24] tracking-tight"
-          >
-            Profil, Pengalaman &amp; Kredensial
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-[#5E7A6D] max-w-2xl text-sm sm:text-base mt-3"
-          >
-            Full-Stack Developer berpengalaman dalam pengembangan aplikasi web dan mobile menggunakan Flutter, Laravel, dan PHP.
-          </motion.p>
+        {/* Header */}
+        <div className="mb-10">
+          <span className="label-tag">{t.about.tag}</span>
+          <h2 className="section-heading mt-2">{t.about.heading}</h2>
         </div>
 
-        {/* Content Grid */}
-        <div className="grid lg:grid-cols-12 gap-8 items-start">
-          {/* Left Column: Profile & Experience */}
+        {/* Tab bar */}
+        <div className="flex items-center gap-6 border-b border-[var(--border)] mb-10">
+          {TABS.map((tabItem) => (
+            <button
+              key={tabItem.id}
+              onClick={() => setTab(tabItem.id)}
+              className={`tab-line ${tab === tabItem.id ? 'active' : ''}`}
+            >
+              {tabItem.label}
+            </button>
+          ))}
+        </div>
+
+        {/* ─── PROFIL TAB ─── */}
+        {tab === 'profil' && (
           <motion.div
-            initial={{ opacity: 0, x: -25 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-7 flex flex-col gap-6"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-start"
           >
-            {/* Professional Profile */}
-            <div className="bg-white border border-[#CCE3DE] rounded-3xl p-6 sm:p-8 shadow-sm">
-              <h3 className="text-xl font-bold text-[#1C2B24] mb-4 flex items-center gap-2.5">
-                <Terminal className="w-5 h-5 text-[#6B9080]" />
-                <span>Profil Profesional</span>
-              </h3>
+            {/* Left: Photo, Education & Status */}
+            <div className="lg:col-span-4 space-y-4">
+              {/* Photo */}
+              <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] w-full aspect-[4/5] max-w-[320px] mx-auto lg:max-w-none shadow-[var(--shadow-md)]">
+                <Image
+                  src="/profile/profile.webp"
+                  alt="Arif Pamungkas"
+                  fill
+                  sizes="(max-width: 1024px) 320px, 380px"
+                  className="object-cover object-top"
+                />
+              </div>
 
-              <p className="text-[#3D5449] text-sm sm:text-base leading-relaxed mb-5">
-                Full-Stack Developer dengan pengalaman mengembangkan aplikasi web dan mobile menggunakan <strong className="text-[#1C2B24]">Flutter, Laravel, dan PHP</strong>. Berpengalaman dalam membangun antarmuka web responsif, aplikasi mobile, RESTful API, serta pengelolaan database. Memahami proses pengembangan perangkat lunak mulai dari perancangan, implementasi, integrasi frontend dan backend, hingga pengujian aplikasi.
-              </p>
+              {/* Education Card */}
+              <div className="card p-4 !rounded-xl">
+                <div className="flex items-start gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-[var(--accent-lt)] text-[var(--accent)] flex items-center justify-center shrink-0 mt-0.5">
+                    <GraduationCap className="w-4.5 h-4.5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-[var(--fg)] leading-snug">
+                      {t.about.profile.education.school}
+                    </p>
+                    <p className="text-xs text-[var(--fg-2)] mt-0.5">
+                      {t.about.profile.education.degree}
+                      <span className="text-[var(--accent)] font-semibold ml-1">
+                        {t.about.profile.education.gpa}
+                      </span>
+                    </p>
+                    <p className="text-[11px] text-[var(--fg-4)] mt-1 font-mono">
+                      {t.about.profile.education.period}
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-              {/* Core Strengths */}
-              <div className="grid sm:grid-cols-2 gap-3">
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-[#6B9080] mt-1 shrink-0" />
-                  <span className="text-xs text-[#3D5449]">
-                    <strong className="text-[#1C2B24]">Frontend & Mobile:</strong> Flutter, React.js, Next.js, Tailwind CSS
-                  </span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-[#6B9080] mt-1 shrink-0" />
-                  <span className="text-xs text-[#3D5449]">
-                    <strong className="text-[#1C2B24]">Backend & DB:</strong> Laravel, PHP, MySQL, PostgreSQL, RESTful API
-                  </span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-[#6B9080] mt-1 shrink-0" />
-                  <span className="text-xs text-[#3D5449]">
-                    <strong className="text-[#1C2B24]">AI & Vision:</strong> Python, YOLOv8, OpenCV, Google ML Kit
-                  </span>
-                </div>
-                <div className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-[#6B9080] mt-1 shrink-0" />
-                  <span className="text-xs text-[#3D5449]">
-                    <strong className="text-[#1C2B24]">Tools:</strong> Git/GitLab, Figma, Cursor, Claude Code
-                  </span>
-                </div>
+              {/* Location & Status Card */}
+              <div className="card p-3.5 !rounded-xl flex items-center justify-between text-xs">
+                <span className="flex items-center gap-1.5 text-[var(--fg-3)]">
+                  <MapPin className="w-3.5 h-3.5 text-[var(--accent)]" />
+                  {t.hero.location}
+                </span>
+                <span className="inline-flex items-center gap-1.5 font-medium text-[var(--accent)] bg-[var(--accent-lt)] px-2.5 py-1 rounded-full text-[11px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                  {t.hero.openToWork}
+                </span>
               </div>
             </div>
 
-            {/* Work Experience */}
-            <div className="bg-white border border-[#CCE3DE] rounded-3xl p-6 sm:p-8 shadow-sm">
-              <h3 className="text-lg font-bold text-[#1C2B24] mb-5 flex items-center gap-2.5">
-                <Briefcase className="w-5 h-5 text-[#6B9080]" />
-                <span>Pengalaman Kerja</span>
-              </h3>
+            {/* Right: Bio & Core Competencies */}
+            <div className="lg:col-span-8 space-y-6">
+              <div>
+                <h3 className="text-xl font-bold text-[var(--fg)] tracking-tight mb-1">
+                  {t.about.profile.name}
+                </h3>
+                <p className="text-sm text-[var(--accent)] font-semibold mb-3">
+                  {t.about.profile.role}
+                </p>
+                <p className="text-[.9375rem] text-[var(--fg-2)] leading-relaxed">
+                  {t.about.profile.bioText}
+                </p>
+              </div>
 
-              {experienceData.map((exp) => (
+              {/* Core competencies */}
+              <div className="pt-2">
+                <p className="text-xs font-bold text-[var(--fg-4)] uppercase tracking-wider mb-3">
+                  {t.about.profile.competenciesTitle}
+                </p>
+                <div className="grid sm:grid-cols-2 gap-3.5">
+                  {t.about.profile.competencies.map(({ label, value }) => (
+                    <div key={label} className="card p-4 !rounded-xl">
+                      <p className="text-[.6875rem] font-bold text-[var(--fg-4)] uppercase tracking-wider mb-1.5">
+                        {label}
+                      </p>
+                      <p className="text-sm text-[var(--fg-2)] font-medium leading-snug">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ─── PENGALAMAN TAB ─── */}
+        {tab === 'pengalaman' && (
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="max-w-2xl"
+          >
+            <div className="relative pl-8 space-y-8">
+              {/* Vertical timeline line */}
+              <div className="absolute left-3.5 top-2 bottom-2 w-px bg-[var(--border)]" />
+
+              {experienceData.map((exp, i) => (
                 <div key={exp.id} className="relative">
-                  {/* Timeline line */}
-                  <div className="absolute left-[15px] top-10 bottom-0 w-[2px] bg-[#CCE3DE] rounded-full" />
+                  {/* Dot */}
+                  <div className="absolute -left-8 top-1 w-7 h-7 rounded-full border-2 border-[var(--border)] bg-[var(--surface)] flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-[var(--accent)]" />
+                  </div>
 
-                  <div className="flex items-start gap-4">
-                    <div className="w-8 h-8 rounded-full bg-[#6B9080] text-[#F6FFF8] flex items-center justify-center shrink-0 z-10 shadow-sm">
-                      <Briefcase className="w-3.5 h-3.5" />
+                  <div className={i < experienceData.length - 1 ? 'pb-2' : ''}>
+                    <div className="flex flex-wrap items-baseline gap-2 mb-0.5">
+                      <h4 className="text-base font-semibold text-[var(--fg)]">{exp.role}</h4>
+                      <span className="text-xs font-mono text-[var(--fg-4)] bg-[var(--surface-2)] px-2 py-0.5 rounded-full border border-[var(--border)]">
+                        {exp.period}
+                      </span>
                     </div>
-
-                    <div className="flex-1 pb-4">
-                      <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <h4 className="text-sm font-bold text-[#1C2B24]">{exp.role}</h4>
-                        <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-[#EAF4F4] text-[#3D5449] border border-[#CCE3DE]">
-                          {exp.period}
+                    <p className="text-sm font-semibold text-[var(--accent)] mb-3">
+                      {exp.company}
+                      {exp.location && (
+                        <span className="text-[var(--fg-4)] font-normal ml-2 inline-flex items-center gap-1 text-xs">
+                          <MapPin className="w-3 h-3" />{exp.location}
                         </span>
-                      </div>
-
-                      <div className="flex items-center gap-3 text-xs text-[#5E7A6D] mb-3">
-                        <span className="font-semibold text-[#6B9080]">{exp.company}</span>
-                        {exp.location && (
-                          <span className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3" />
-                            {exp.location}
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="space-y-2">
-                        {exp.responsibilities.map((r, i) => (
-                          <div key={i} className="flex items-start gap-2 text-xs text-[#3D5449] leading-relaxed">
-                            <ChevronRight className="w-3 h-3 text-[#A4C3B2] mt-0.5 shrink-0" />
-                            <span>{r}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                      )}
+                    </p>
+                    <ul className="space-y-1.5">
+                      {exp.responsibilities.map((r, j) => (
+                        <li key={j} className="flex items-start gap-2 text-sm text-[var(--fg-2)] leading-relaxed">
+                          <span className="text-[var(--accent)] mt-1 shrink-0">›</span>
+                          <span>{r}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* Education Card */}
-            <div className="bg-white border border-[#CCE3DE] rounded-3xl p-6 sm:p-7 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-5">
-              <div className="p-3.5 rounded-2xl bg-[#EAF4F4] text-[#6B9080] border border-[#CCE3DE] shrink-0">
-                <GraduationCap className="w-7 h-7" />
-              </div>
-              <div className="flex-1">
-                <div className="text-xs font-semibold text-[#6B9080] uppercase tracking-wider mb-1">
-                  Pendidikan
-                </div>
-                <h4 className="text-base font-bold text-[#1C2B24]">
-                  Politeknik Negeri Semarang
-                </h4>
-                <p className="text-xs sm:text-sm text-[#3D5449] mt-0.5">
-                  Diploma (D3) Teknik Informatika — <strong className="text-[#1C2B24]">IPK 3.76 / 4.00</strong>
-                </p>
-                <p className="text-[11px] text-[#5E7A6D] mt-1 flex items-center gap-1.5">
-                  <Calendar className="w-3 h-3" />
-                  Sep 2023 – Sep 2026
-                </p>
-              </div>
-              <div className="px-3.5 py-1.5 rounded-xl bg-[#EAF4F4] text-[#3D5449] text-xs font-bold border border-[#A4C3B2]">
-                3.76 / 4.00
-              </div>
-            </div>
           </motion.div>
+        )}
 
-          {/* Right Column: Certifications with Preview Images */}
+        {/* ─── SERTIFIKASI TAB ─── */}
+        {tab === 'sertifikasi' && (
           <motion.div
-            initial={{ opacity: 0, x: 25 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-5 flex flex-col gap-4"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3"
           >
-            <div className="bg-white border border-[#CCE3DE] rounded-3xl p-6 shadow-sm">
-              <div className="flex items-center justify-between mb-5">
-                <h3 className="text-base font-bold text-[#1C2B24] flex items-center gap-2">
-                  <Award className="w-5 h-5 text-[#6B9080]" />
-                  <span>Sertifikasi Profesional</span>
-                </h3>
-                <span className="text-[11px] font-bold text-[#6B9080] bg-[#EAF4F4] px-2 py-0.5 rounded-lg border border-[#A4C3B2]">
-                  {certificationsData.length} Sertifikat
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                {certificationsData.map((cert) => (
-                  <button
-                    key={cert.id}
-                    onClick={() => setSelectedCert(cert.id)}
-                    className="w-full text-left p-4 rounded-2xl bg-[#F6FFF8] border border-[#CCE3DE] hover:border-[#A4C3B2] transition-all group cursor-pointer"
-                  >
-                    {/* Certificate Thumbnail */}
-                    <div className="relative w-full aspect-[16/11] rounded-xl overflow-hidden mb-3 bg-[#EAF4F4] border border-[#CCE3DE]">
-                      <img
-                        src={cert.image}
-                        alt={cert.title}
-                        className="w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-300"
-                        loading="lazy"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-center pb-2">
-                        <span className="text-white text-[11px] font-semibold bg-[#6B9080]/90 px-3 py-1 rounded-lg backdrop-blur-sm flex items-center gap-1.5">
-                          <ExternalLink className="w-3 h-3" />
-                          Lihat Detail
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <span className="text-xs font-bold text-[#1C2B24] leading-snug block">
-                          {cert.title}
-                        </span>
-                        <span className="text-[11px] text-[#6B9080] font-semibold">
-                          {cert.issuer} • {cert.year}
-                        </span>
-                      </div>
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-md bg-[#EAF4F4] text-[#3D5449] border border-[#CCE3DE] shrink-0 mt-0.5">
-                        {cert.badgeText}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
+            {certificationsData.map((cert, i) => (
+              <motion.button
+                key={cert.id}
+                onClick={() => setSelectedCert(cert.id)}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25, delay: i * 0.04 }}
+                className="card text-left p-4 hover:border-[var(--accent)] cursor-pointer group flex items-center gap-3 hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]"
+              >
+                <div className="w-10 h-10 rounded-xl bg-[var(--accent-lt)] flex items-center justify-center text-[var(--accent)] shrink-0">
+                  <Award className="w-4.5 h-4.5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-[var(--fg)] leading-snug truncate group-hover:text-[var(--accent)] transition-colors">
+                    {cert.title}
+                  </p>
+                  <p className="text-xs text-[var(--fg-4)] mt-0.5">{cert.issuer} · {cert.year}</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-[var(--fg-4)] group-hover:text-[var(--accent)] shrink-0 transition-colors" />
+              </motion.button>
+            ))}
           </motion.div>
-        </div>
+        )}
       </div>
 
-      {/* Certificate Detail Modal */}
+      {/* Certificate Modal */}
       <AnimatePresence>
         {activeCert && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
+            style={{ background: 'rgba(0,0,0,.7)', backdropFilter: 'blur(6px)' }}
             onClick={() => setSelectedCert(null)}
           >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white rounded-3xl border border-[#CCE3DE] shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto"
+              initial={{ opacity: 0, scale: 0.96, y: 12 }}
+              animate={{ opacity: 1, scale: 1,    y: 0  }}
+              exit={{ opacity: 0, scale: 0.96, y: 12 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+              className="bg-[var(--surface)] rounded-[var(--radius-xl)] shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-[var(--border)]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Modal Header */}
-              <div className="sticky top-0 z-10 bg-white/95 backdrop-blur-md border-b border-[#EAF4F4] px-6 py-4 rounded-t-3xl flex items-center justify-between">
+              <div className="border-b border-[var(--border)] px-5 py-4 flex items-center justify-between shrink-0">
                 <div>
-                  <h3 className="text-base font-bold text-[#1C2B24]">{activeCert.title}</h3>
-                  <p className="text-xs text-[#6B9080] font-semibold">
-                    {activeCert.issuer} • {activeCert.year}
-                  </p>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[.625rem] font-mono text-[var(--accent)] bg-[var(--accent-lt)] px-2 py-0.5 rounded-full">
+                      {currentIndex + 1} / {certificationsData.length}
+                    </span>
+                    <span className="text-xs text-[var(--fg-4)]">{activeCert.issuer} · {activeCert.year}</span>
+                  </div>
+                  <h3 className="text-sm font-semibold text-[var(--fg)]">{activeCert.title}</h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  <a
-                    href={activeCert.pdfUrl}
-                    download
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#6B9080] hover:bg-[#567668] text-[#F6FFF8] text-xs font-semibold transition-colors shadow-sm"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Unduh PDF</span>
-                  </a>
-                  <button
-                    onClick={() => setSelectedCert(null)}
-                    className="p-2 rounded-xl bg-[#EAF4F4] text-[#3D5449] hover:bg-[#CCE3DE] border border-[#CCE3DE] transition-colors"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
+                <button
+                  onClick={() => setSelectedCert(null)}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--surface-2)] transition-all cursor-pointer"
+                  aria-label={t.about.modal.close}
+                >
+                  <X className="w-4.5 h-4.5" />
+                </button>
               </div>
 
-              {/* Modal Body */}
-              <div className="p-6">
-                <div className="rounded-2xl overflow-hidden border border-[#CCE3DE] shadow-inner bg-[#F6FFF8]">
-                  <img
+              {/* Cert tabs strip */}
+              <div className="flex items-center gap-1 px-4 py-2 bg-[var(--bg)] border-b border-[var(--border)] overflow-x-auto shrink-0">
+                {certificationsData.map((c, idx) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedCert(c.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs whitespace-nowrap transition-all cursor-pointer ${
+                      c.id === activeCert.id
+                        ? 'bg-[var(--surface)] text-[var(--fg)] font-semibold border border-[var(--border)] shadow-sm'
+                        : 'text-[var(--fg-4)] hover:text-[var(--fg)] hover:bg-[var(--surface)]/60'
+                    }`}
+                  >
+                    <span className="text-[.625rem] font-mono text-[var(--accent)] mr-1">{idx + 1}.</span>
+                    {c.badgeText}
+                  </button>
+                ))}
+              </div>
+
+              {/* Image */}
+              <div className="p-5 overflow-y-auto">
+                <div className="relative rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--bg)]">
+                  <Image
                     src={activeCert.image}
                     alt={activeCert.title}
-                    className="w-full h-auto"
+                    width={900}
+                    height={600}
+                    sizes="(max-width: 768px) 100vw, 768px"
+                    className="w-full h-auto object-contain max-h-[52vh] block"
                   />
+                  <button
+                    onClick={handlePrevCert}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--surface)]/95 shadow-md border border-[var(--border)] flex items-center justify-center text-[var(--fg-2)] hover:bg-[var(--surface)] transition-all cursor-pointer"
+                    aria-label={t.about.modal.prev}
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleNextCert}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-[var(--surface)]/95 shadow-md border border-[var(--border)] flex items-center justify-center text-[var(--fg-2)] hover:bg-[var(--surface)] transition-all cursor-pointer"
+                    aria-label={t.about.modal.next}
+                  >
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
                 </div>
-                <p className="text-sm text-[#3D5449] mt-4 leading-relaxed">
-                  {activeCert.description}
-                </p>
+                {activeCert.description && (
+                  <p className="text-sm text-[var(--fg-2)] leading-relaxed mt-4">{activeCert.description}</p>
+                )}
+              </div>
+
+              {/* Footer nav */}
+              <div className="bg-[var(--bg)] border-t border-[var(--border)] px-5 py-3 flex items-center justify-between shrink-0">
+                <button onClick={handlePrevCert} className="btn btn-ghost text-xs">
+                  <ChevronLeft className="w-4 h-4" /> {t.about.modal.prev}
+                </button>
+                <div className="flex gap-1.5">
+                  {certificationsData.map((c, i) => (
+                    <button
+                      key={c.id}
+                      onClick={() => setSelectedCert(c.id)}
+                      className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                        c.id === activeCert.id ? 'w-5 bg-[var(--accent)]' : 'w-1.5 bg-[var(--border-2)]'
+                      }`}
+                      aria-label={`${t.about.modal.certLabel} ${i + 1}`}
+                    />
+                  ))}
+                </div>
+                <button onClick={handleNextCert} className="btn btn-ghost text-xs">
+                  {t.about.modal.next} <ChevronRight className="w-4 h-4" />
+                </button>
               </div>
             </motion.div>
           </motion.div>

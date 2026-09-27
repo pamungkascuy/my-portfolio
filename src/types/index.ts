@@ -1,4 +1,4 @@
-export type ProjectCategory = 'All' | 'Mobile' | 'Web & Backend' | 'AI & Computer Vision' | 'Infrastructure';
+export type ProjectCategory = 'All' | 'Mobile' | 'Mobile & Web Admin' | 'Web & Backend' | 'AI & Computer Vision' | 'UI/UX & Desain' | 'Video & Multimedia' | 'Infrastructure';
 
 export interface Project {
   id: string;
@@ -8,13 +8,17 @@ export interface Project {
   description: string;
   background?: string;
   role?: string;
-  category: 'Mobile' | 'Web & Backend' | 'AI & Computer Vision' | 'Infrastructure';
+  category: 'Mobile' | 'Mobile & Web Admin' | 'Web & Backend' | 'AI & Computer Vision' | 'UI/UX & Desain' | 'Video & Multimedia' | 'Infrastructure';
   techStack: string[];
   image: string;
   githubUrl?: string;
   liveDemoUrl?: string;
+  videoUrl?: string;
+  youtubeId?: string;
+  figmaUrl?: string;
   featured: boolean;
   highlights?: string[];
+  gallery?: { label: string; image: string }[];
 }
 
 export type SkillLevel = 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';

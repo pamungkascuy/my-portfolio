@@ -428,6 +428,77 @@ export function RestAPILogo({ className = 'w-4 h-4', size }: LogoProps) {
   );
 }
 
+export function FigmaLogo({ className = 'w-4 h-4', size }: LogoProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M8 24C10.2091 24 12 22.2091 12 20V16H8C5.79086 16 4 17.7909 4 20C4 22.2091 5.79086 24 8 24Z" fill="#0ACF83"/>
+      <path d="M4 12C4 9.79086 5.79086 8 8 8H12V16H8C5.79086 16 4 14.2091 4 12Z" fill="#A259FF"/>
+      <path d="M4 4C4 1.79086 5.79086 0 8 0H12V8H8C5.79086 8 4 6.20914 4 4Z" fill="#F24E1E"/>
+      <path d="M12 0H16C18.2091 0 20 1.79086 20 4C20 6.20914 18.2091 8 16 8H12V0Z" fill="#FF7262"/>
+      <path d="M20 12C20 14.2091 18.2091 16 16 16C13.7909 16 12 14.2091 12 12C12 9.79086 13.7909 8 16 8C18.2091 8 20 9.79086 20 12Z" fill="#1ABCFE"/>
+    </svg>
+  );
+}
+
+export function CanvaLogo({ className = 'w-4 h-4', size }: LogoProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="10" fill="#00C4CC"/>
+      <path d="M14.5 9.5C13.8 8.5 12.6 8 11.2 8C8.8 8 7 10 7 12.5C7 15 8.8 17 11.2 17C12.8 17 14 16.2 14.7 15" stroke="white" strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
+export function CorelDrawLogo({ className = 'w-4 h-4', size }: LogoProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="#00843D" />
+      <path d="M12 4C8.5 4 6 7 6 10.5C6 13.5 8 16 10.5 17.5V19.5H13.5V17.5C16 16 18 13.5 18 10.5C18 7 15.5 4 12 4Z" fill="white" fillOpacity="0.9" />
+      <path d="M10 20H14V21H10V20Z" fill="white" />
+    </svg>
+  );
+}
+
+export function PixelLabLogo({ className = 'w-4 h-4', size }: LogoProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="6" fill="#1E88E5" />
+      <path d="M7 6H13C15.2 6 17 7.8 17 10C17 12.2 15.2 14 13 14H10V18H7V6Z" fill="white" />
+      <circle cx="10" cy="10" r="1.5" fill="#1E88E5" />
+    </svg>
+  );
+}
+
+export function AlightMotionLogo({ className = 'w-4 h-4', size }: LogoProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="6" fill="#0E1921" />
+      <path d="M4 14C7 8 10 8 12 12C14 16 17 16 20 10" stroke="#00E5FF" strokeWidth="2.5" strokeLinecap="round" />
+      <circle cx="12" cy="12" r="2" fill="#FF4081" />
+    </svg>
+  );
+}
+
+export function CapCutLogo({ className = 'w-4 h-4', size }: LogoProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="5" fill="#000000" />
+      <path d="M5 8L12 12L5 16V8Z" fill="white" />
+      <path d="M19 8L12 12L19 16V8Z" fill="white" />
+      <line x1="6" y1="6" x2="18" y2="18" stroke="#00F0FF" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+export function AdobePremiereLogo({ className = 'w-4 h-4', size }: LogoProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="24" height="24" rx="4" fill="#00005B" stroke="#9999FF" strokeWidth="1.5" />
+      <text x="4.5" y="16.5" fill="#EA77FF" fontSize="11" fontWeight="bold" fontFamily="sans-serif">Pr</text>
+    </svg>
+  );
+}
+
 export function getTechLogo(techName: string, className = 'w-4 h-4'): React.ReactNode {
   const norm = techName.toLowerCase().trim();
 
@@ -455,6 +526,13 @@ export function getTechLogo(techName: string, className = 'w-4 h-4'): React.Reac
   if (norm.includes('computer vision')) return <ComputerVisionLogo className={className} />;
   if (norm.includes('css')) return <CSSLogo className={className} />;
   if (norm.includes('rest api')) return <RestAPILogo className={className} />;
+  if (norm.includes('figma')) return <FigmaLogo className={className} />;
+  if (norm.includes('canva')) return <CanvaLogo className={className} />;
+  if (norm.includes('corel')) return <CorelDrawLogo className={className} />;
+  if (norm.includes('pixel')) return <PixelLabLogo className={className} />;
+  if (norm.includes('alight')) return <AlightMotionLogo className={className} />;
+  if (norm.includes('capcut')) return <CapCutLogo className={className} />;
+  if (norm.includes('premiere')) return <AdobePremiereLogo className={className} />;
 
   return null;
 }

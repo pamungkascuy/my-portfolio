@@ -2,6 +2,17 @@ import { SkillCategoryGroup, Certification, WorkExperience } from '@/types';
 
 export const certificationsData: Certification[] = [
   {
+    id: 'internship-techmedia',
+    title: 'Sertifikat Magang / Praktik Kerja Lapangan',
+    issuer: 'PT. Inovasi Tekno Media Bangsa',
+    year: '2025',
+    badgeText: 'Full-Stack Developer Intern',
+    description:
+      'Pengakuan resmi penyelesaian program magang/praktik kerja lapangan sebagai Full-Stack Developer dalam pengembangan aplikasi web dan mobile (Propaktani).',
+    image: '/certificates/cert-magang.webp',
+    pdfUrl: '/certificates/cert-magang.webp',
+  },
+  {
     id: 'solusi247-big-data',
     title: 'Certified Associate Big Data Analyst',
     issuer: 'SOLUSI247',
@@ -88,12 +99,32 @@ export const skillCategoriesData: SkillCategoryGroup[] = [
     ],
   },
   {
+    id: 'design-graphics',
+    title: 'UI/UX & Desain Grafis',
+    description: 'Perancangan UI/UX antarmuka aplikasi, wireframing, prototyping, dan desain visual.',
+    skills: [
+      { name: 'Figma', category: 'UI/UX Design', level: 'Expert' },
+      { name: 'Canva', category: 'Graphic Design', level: 'Expert' },
+      { name: 'Corel Draw', category: 'Vector Design', level: 'Advanced' },
+      { name: 'PixelLab', category: 'Typography & Layout', level: 'Advanced' },
+    ],
+  },
+  {
+    id: 'video-editing',
+    title: 'Video & Motion Editing',
+    description: 'Produksi video multimedia, motion graphics, velocity edit, dan color grading.',
+    skills: [
+      { name: 'Adobe Premiere Pro', category: 'Video Editing', level: 'Advanced' },
+      { name: 'CapCut', category: 'Vertical & Social Video', level: 'Expert' },
+      { name: 'Alight Motion', category: 'Motion & Keyframe', level: 'Advanced' },
+    ],
+  },
+  {
     id: 'tools-networking',
     title: 'Tools & Networking',
     description: 'Peralatan rekayasa perangkat lunak modern dan konfigurasi server.',
     skills: [
       { name: 'Git & GitLab', category: 'Tools', level: 'Expert' },
-      { name: 'Figma', category: 'Tools', level: 'Advanced' },
       { name: 'MikroTik (MTCNA)', category: 'Networking', level: 'Advanced' },
       { name: 'Server Optimization', category: 'Networking', level: 'Advanced' },
       { name: 'Cursor & Claude Code', category: 'Tools', level: 'Expert' },

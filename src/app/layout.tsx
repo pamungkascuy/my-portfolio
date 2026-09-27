@@ -12,18 +12,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import Providers from "@/components/Providers";
+
 export const metadata: Metadata = {
-  title: "Arif Pamungkas | Fullstack Developer & Mobile Engineer",
+  title: "Arif Pamungkas | Fullstack Developer, UI/UX & Video Editor",
   description:
-    "Portofolio profesional Arif Pamungkas — Fullstack Developer & Mobile Engineer berpengalaman dalam Flutter, Laravel, Computer Vision, dan Cloud.",
+    "Portofolio profesional Arif Pamungkas — Fullstack Developer, UI/UX Designer & Video Editor berpengalaman dalam Flutter, Laravel, Figma, Premiere Pro, dan Computer Vision.",
   keywords: [
     "Arif Pamungkas",
     "Fullstack Developer",
     "Mobile Engineer",
+    "UI/UX Designer",
+    "Video Editor",
     "Flutter",
     "Laravel",
-    "React",
-    "Next.js",
+    "Figma",
+    "Premiere Pro",
     "Computer Vision",
     "Portfolio",
   ],
@@ -37,10 +41,34 @@ export default function RootLayout({
   return (
     <html
       lang="id"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#F6FFF8] text-[#1C2B24] font-sans selection:bg-[#6B9080] selection:text-[#F6FFF8]">
-        {children}
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                try {
+                  var savedTheme = localStorage.getItem('portfolio_theme') || localStorage.getItem('theme');
+                  var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                  if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
+                  }
+                  var savedLang = localStorage.getItem('portfolio_lang') || localStorage.getItem('lang');
+                  if (savedLang) {
+                    document.documentElement.lang = savedLang;
+                  }
+                } catch (e) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col bg-[var(--bg)] text-[var(--fg)] font-sans selection:bg-[var(--accent)] selection:text-white">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

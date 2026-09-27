@@ -2,204 +2,359 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import {
-  FolderGit2,
-  Sparkles,
   ArrowRight,
   ExternalLink,
+  Play,
+  Code2,
+  Palette,
+  Film,
+  Sparkles,
 } from 'lucide-react';
-import { GithubIcon } from '@/components/Icons';
+import { GithubIcon, FigmaIcon, YoutubeIcon, TiktokIcon } from '@/components/Icons';
+import { getLocalizedProjects } from '@/data/localizedData';
 import { getTechLogo } from '@/components/TechLogos';
-import { projectsData } from '@/data/projects';
-import { ProjectCategory } from '@/types';
+import { useApp } from '@/context/AppContext';
+import { Project } from '@/types';
 
-const categories: ProjectCategory[] = [
-  'All',
-  'Mobile',
-  'Web & Backend',
-  'AI & Computer Vision',
-  'Infrastructure',
-];
+type MainPillar = 'all' | 'coding' | 'desain' | 'video';
 
-export default function ProjectsSection() {
-  const [activeCategory, setActiveCategory] = useState<ProjectCategory>('All');
+interface PillarConfig {
+  id: MainPillar;
+  label: string;
+  count: number;
+  icon: React.ReactNode;
+  description: string;
+}
 
-  const filteredProjects =
-    activeCategory === 'All'
-      ? projectsData
-      : projectsData.filter((p) => p.category === activeCategory);
-
+function ProjectCard({ project, index, t }: { project: Project; index: number; t: ReturnType<typeof useApp>['t'] }) {
   return (
-    <section id="projects" className="py-24 relative overflow-hidden bg-white/70">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Section Header */}
-        <div className="flex flex-col items-center text-center mb-14">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF4F4] border border-[#A4C3B2] text-[#3D5449] text-xs font-semibold uppercase tracking-wider mb-3"
-          >
-            <FolderGit2 className="w-3.5 h-3.5 text-[#6B9080]" />
-            <span>Portofolio Karya</span>
-          </motion.div>
+    <article className="card group flex flex-col overflow-hidden hover:border-[var(--accent)] transition-all">
+      {/* Thumbnail */}
+      <div className="relative overflow-hidden bg-[var(--bg)]" style={{ aspectRatio: '16/9' }}>
+        <Link
+          href={`/projects/${project.id}`}
+          className="block relative w-full h-full"
+        >
+          <Image
+            src={project.image}
+            alt={project.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 380px"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            priority={index < 2}
+          />
+        </Link>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl sm:text-4xl font-extrabold text-[#1C2B24] tracking-tight"
-          >
-            Proyek Nyata &amp; Rekayasa Terapan
-          </motion.h2>
+        {/* Category pill */}
+        <span className="absolute top-2.5 left-2.5 text-[10px] font-semibold uppercase tracking-wide bg-[var(--surface)]/95 text-[var(--fg-2)] px-2 py-0.5 rounded shadow-sm pointer-events-none z-10 border border-[var(--border)]">
+          {project.category}
+        </span>
 
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-[#5E7A6D] max-w-2xl text-sm sm:text-base mt-3"
+        {/* Period */}
+        {project.period && (
+          <span className="absolute top-2.5 right-2.5 text-[10px] font-mono bg-black/75 text-white/95 px-2 py-0.5 rounded pointer-events-none z-10 shadow-sm">
+            {project.period}
+          </span>
+        )}
+
+        {/* TikTok Video CTA overlay badge */}
+        {project.videoUrl && !project.youtubeId && (
+          <a
+            href={project.videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            aria-label={t.projects.card.watchTiktok}
+            className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black text-white hover:bg-neutral-900 text-xs font-semibold shadow-lg z-20 transition-all hover:scale-105 border border-white/20 cursor-pointer"
           >
-            Pilihan proyek aplikasi web, mobile, dan sistem komputasi cerdas. Klik salah satu proyek untuk membaca ringkasan teknis dan studi kasus lengkap.
-          </motion.p>
+            <TiktokIcon className="w-3.5 h-3.5 text-white" />
+            <span>{t.projects.card.watchTiktok}</span>
+            <ExternalLink className="w-3 h-3 opacity-70" />
+          </a>
+        )}
+
+        {/* YouTube Video play overlay badge */}
+        {project.youtubeId && (
+          <span className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/85 text-white text-[11px] font-semibold shadow-md pointer-events-none z-10">
+            <Play className="w-3 h-3 fill-white ml-0.5 text-white" />
+            <span>{t.projects.card.videoBadge}</span>
+          </span>
+        )}
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-4">
+        <h3 className="text-sm font-semibold text-[var(--fg)] leading-snug mb-1.5 group-hover:text-[var(--accent)] transition-colors">
+          <Link href={`/projects/${project.id}`}>{project.title}</Link>
+        </h3>
+
+        <p className="text-xs text-[var(--fg-3)] leading-relaxed line-clamp-2 mb-4 flex-1">
+          {project.summary || project.description}
+        </p>
+
+        {/* Tech */}
+        <div className="flex flex-wrap gap-1 mb-4">
+          {project.techStack.slice(0, 4).map((tech) => {
+            const logo = getTechLogo(tech, 'w-3 h-3 shrink-0');
+            return (
+              <span key={tech} className="skill-pill">
+                {logo}
+                {tech}
+              </span>
+            );
+          })}
+          {project.techStack.length > 4 && (
+            <span className="skill-pill text-[var(--fg-3)]">+{project.techStack.length - 4}</span>
+          )}
         </div>
 
-        {/* Category Filter Tabs */}
-        <div className="flex items-center justify-center gap-2 flex-wrap mb-12">
-          {categories.map((cat) => {
-            const isSelected = activeCategory === cat;
+        {/* Actions */}
+        <div className="flex items-center gap-1.5 pt-3 border-t border-[var(--border)]">
+          <Link
+            href={`/projects/${project.id}`}
+            className="flex-1 btn btn-ghost text-xs justify-center"
+          >
+            {t.projects.card.detail}
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          {project.figmaUrl && (
+            <a
+              href={project.figmaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.projects.card.openFigma}
+              className="p-2 rounded-md text-[var(--fg-3)] hover:text-[#A259FF] hover:bg-[var(--surface)] transition-colors"
+              title={t.projects.card.openFigma}
+            >
+              <FigmaIcon className="w-4 h-4" />
+            </a>
+          )}
+          {project.youtubeId && (
+            <a
+              href={project.videoUrl || `https://youtu.be/${project.youtubeId}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.projects.card.watchYoutube}
+              className="p-2 rounded-md text-[var(--fg-3)] hover:text-[#FF0000] hover:bg-[var(--surface)] transition-colors"
+              title={t.projects.card.watchYoutube}
+            >
+              <YoutubeIcon className="w-4 h-4" />
+            </a>
+          )}
+          {project.videoUrl && !project.youtubeId && (
+            <a
+              href={project.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.projects.card.watchTiktok}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-black text-white hover:bg-neutral-800 text-[11px] font-semibold transition-all shadow-xs hover:scale-105 cursor-pointer"
+              title={t.projects.card.watchTiktok}
+            >
+              <TiktokIcon className="w-3.5 h-3.5 text-white" />
+              <span>{t.projects.card.watchTiktok}</span>
+              <ExternalLink className="w-3 h-3 opacity-70" />
+            </a>
+          )}
+          {project.githubUrl && (
+            <a
+              href={project.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.projects.card.github}
+              className="p-2 rounded-md text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--surface)] transition-colors"
+              title={t.projects.card.github}
+            >
+              <GithubIcon className="w-4 h-4" />
+            </a>
+          )}
+          {project.liveDemoUrl && !project.figmaUrl && !project.videoUrl && (
+            <a
+              href={project.liveDemoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.projects.card.liveDemo}
+              className="p-2 rounded-md text-[var(--fg-3)] hover:text-[var(--fg)] hover:bg-[var(--surface)] transition-colors"
+              title={t.projects.card.liveDemo}
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export default function ProjectsSection() {
+  const { t, locale } = useApp();
+  const [activePillar, setActivePillar] = useState<MainPillar>('all');
+  const [subCategory, setSubCategory] = useState<string>('all');
+
+  const localizedProjects = getLocalizedProjects(locale);
+
+  // Count items by main pillar
+  const codingProjects = localizedProjects.filter((p) =>
+    ['Mobile', 'Mobile & Web Admin', 'Web & Backend', 'AI & Computer Vision', 'Infrastructure'].includes(p.category)
+  );
+  const designProjects = localizedProjects.filter((p) => p.category === 'UI/UX & Desain');
+  const videoProjects = localizedProjects.filter((p) => p.category === 'Video & Multimedia');
+
+  const PILLARS: PillarConfig[] = [
+    {
+      id: 'all',
+      label: t.projects.pillars.all.label,
+      count: localizedProjects.length,
+      icon: <Sparkles className="w-4 h-4" />,
+      description: t.projects.pillars.all.desc,
+    },
+    {
+      id: 'coding',
+      label: t.projects.pillars.coding.label,
+      count: codingProjects.length,
+      icon: <Code2 className="w-4 h-4" />,
+      description: t.projects.pillars.coding.desc,
+    },
+    {
+      id: 'desain',
+      label: t.projects.pillars.design.label,
+      count: designProjects.length,
+      icon: <Palette className="w-4 h-4" />,
+      description: t.projects.pillars.design.desc,
+    },
+    {
+      id: 'video',
+      label: t.projects.pillars.video.label,
+      count: videoProjects.length,
+      icon: <Film className="w-4 h-4" />,
+      description: t.projects.pillars.video.desc,
+    },
+  ];
+
+  // Coding sub-categories
+  const CODING_SUB_FILTERS = [
+    { id: 'all', label: t.projects.subFilters.all },
+    { id: 'Mobile', label: t.projects.subFilters.mobile },
+    { id: 'Web & Backend', label: t.projects.subFilters.web },
+    { id: 'AI & Computer Vision', label: t.projects.subFilters.ai },
+    { id: 'Infrastructure', label: t.projects.subFilters.server },
+  ];
+
+  // Filter projects based on active pillar and sub-category
+  const filteredProjects = localizedProjects.filter((p) => {
+    if (activePillar === 'coding') {
+      if (!['Mobile', 'Mobile & Web Admin', 'Web & Backend', 'AI & Computer Vision', 'Infrastructure'].includes(p.category)) {
+        return false;
+      }
+      if (subCategory !== 'all') {
+        if (subCategory === 'Mobile') {
+          return p.category === 'Mobile' || p.category === 'Mobile & Web Admin';
+        }
+        if (subCategory === 'Web & Backend') {
+          return p.category === 'Web & Backend' || p.category === 'Mobile & Web Admin';
+        }
+        if (subCategory === 'AI & Computer Vision') {
+          return p.category === 'AI & Computer Vision' || p.techStack.includes('Google ML Kit') || p.techStack.includes('YOLOv8');
+        }
+        return p.category === subCategory;
+      }
+      return true;
+    }
+    if (activePillar === 'desain') {
+      return p.category === 'UI/UX & Desain';
+    }
+    if (activePillar === 'video') {
+      return p.category === 'Video & Multimedia';
+    }
+    return true;
+  });
+
+  const handlePillarChange = (pillar: MainPillar) => {
+    setActivePillar(pillar);
+    setSubCategory('all');
+  };
+
+  const activePillarConfig = PILLARS.find((p) => p.id === activePillar);
+
+  return (
+    <section id="projects" className="py-24" style={{ background: 'var(--bg)' }}>
+      <div className="container-xl">
+
+        {/* Section Header */}
+        <div className="mb-8">
+          <span className="label-tag">{t.projects.tag}</span>
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-2">
+            <div>
+              <h2 className="section-heading">{t.projects.heading}</h2>
+              <p className="text-sm text-[var(--fg-3)] mt-2 max-w-xl leading-relaxed">
+                {activePillarConfig?.description}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Primary Pillar Tabs */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-px mb-6 border-b border-[var(--border)]">
+          {PILLARS.map((pillar) => {
+            const isActive = activePillar === pillar.id;
             return (
               <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
-                  isSelected
-                    ? 'text-[#F6FFF8]'
-                    : 'text-[#3D5449] hover:text-[#1C2B24] bg-white border border-[#CCE3DE] hover:border-[#A4C3B2]'
+                key={pillar.id}
+                onClick={() => handlePillarChange(pillar.id)}
+                className={`relative flex items-center gap-2 px-4 py-2.5 text-sm font-semibold transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+                  isActive ? 'text-[var(--fg)]' : 'text-[var(--fg-3)] hover:text-[var(--fg)]'
                 }`}
               >
-                {isSelected && (
-                  <motion.div
-                    layoutId="active-project-tab"
-                    className="absolute inset-0 bg-[#6B9080] rounded-xl -z-10 shadow-sm shadow-[#6B9080]/30"
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                  />
+                <span className={isActive ? 'text-[var(--accent)]' : ''}>{pillar.icon}</span>
+                <span>{pillar.label}</span>
+                <span className={`text-[.625rem] font-mono px-1.5 py-0.5 rounded-full ${
+                  isActive
+                    ? 'bg-[var(--fg)] text-[var(--bg)]'
+                    : 'bg-[var(--surface-2)] text-[var(--fg-4)] border border-[var(--border)]'
+                }`}>
+                  {pillar.count}
+                </span>
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-0.5 rounded-t-full bg-[var(--accent)]" />
                 )}
-                {cat}
               </button>
             );
           })}
         </div>
 
-        {/* Compact & Clean Projects Cards Grid */}
-        <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-7">
-          <AnimatePresence>
-            {filteredProjects.map((project) => (
-              <motion.article
-                key={project.id}
-                layout
-                initial={{ opacity: 0, scale: 0.96 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.96 }}
-                transition={{ duration: 0.3 }}
-                className="group flex flex-col rounded-3xl bg-white border border-[#CCE3DE] hover:border-[#6B9080] transition-all duration-300 overflow-hidden shadow-xs hover:shadow-xl hover:shadow-[#6B9080]/10 hover:-translate-y-1"
+        {/* Sub-filter for Coding */}
+        {activePillar === 'coding' && (
+          <div className="flex items-center gap-1.5 flex-wrap mb-8">
+            <span className="text-xs font-medium text-[var(--fg-4)] mr-1">{t.projects.subFilters.filterTech}</span>
+            {CODING_SUB_FILTERS.map((sub) => (
+              <button
+                key={sub.id}
+                onClick={() => setSubCategory(sub.id)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                  subCategory === sub.id
+                    ? 'bg-[var(--accent)] text-white border-[var(--accent)]'
+                    : 'bg-transparent text-[var(--fg-3)] border-[var(--border)] hover:text-[var(--fg)] hover:border-[var(--border-2)]'
+                }`}
               >
-                {/* Project Image Preview with Category Badge */}
-                <Link
-                  href={`/projects/${project.id}`}
-                  className="relative aspect-[16/10] w-full overflow-hidden bg-[#EAF4F4] block"
-                >
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-60 group-hover:opacity-40 transition-opacity" />
-
-                  {/* Top Badges */}
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none">
-                    <span className="px-3 py-1 rounded-xl bg-white/95 backdrop-blur-md border border-[#CCE3DE] text-[11px] font-bold text-[#1C2B24] shadow-xs">
-                      {project.category}
-                    </span>
-                    {project.period && (
-                      <span className="text-[10px] font-mono px-2.5 py-1 rounded-xl bg-black/60 backdrop-blur-md text-white border border-white/20">
-                        {project.period}
-                      </span>
-                    )}
-                  </div>
-                </Link>
-
-                {/* Card Content - Clean & uncluttered */}
-                <div className="p-6 flex-1 flex flex-col justify-between">
-                  <div>
-                    {/* Title */}
-                    <h3 className="text-base sm:text-lg font-bold text-[#1C2B24] group-hover:text-[#6B9080] transition-colors leading-snug mb-2">
-                      <Link href={`/projects/${project.id}`}>
-                        {project.title}
-                      </Link>
-                    </h3>
-
-                    {/* Brief Summary (Line clamped so height is uniform) */}
-                    <p className="text-[#5E7A6D] text-xs sm:text-sm leading-relaxed line-clamp-2 mb-4">
-                      {project.summary || project.description}
-                    </p>
-                  </div>
-
-                  <div>
-                    {/* Compact Tech Stack Pills (Limit to top 3-4) */}
-                    <div className="flex flex-wrap items-center gap-1.5 pt-3 border-t border-[#EAF4F4] mb-4">
-                      {project.techStack.slice(0, 3).map((tech) => {
-                        const logoNode = getTechLogo(tech, 'w-3.5 h-3.5 shrink-0');
-                        return (
-                          <span
-                            key={tech}
-                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#F6FFF8] border border-[#CCE3DE] text-[#1C2B24] text-[11px] font-semibold"
-                          >
-                            {logoNode}
-                            <span>{tech}</span>
-                          </span>
-                        );
-                      })}
-                      {project.techStack.length > 3 && (
-                        <span className="text-[10px] font-bold text-[#5E7A6D] px-2 py-0.5 rounded-md bg-[#EAF4F4]">
-                          +{project.techStack.length - 3} lainnya
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Action Bar */}
-                    <div className="flex items-center justify-between gap-2">
-                      <Link
-                        href={`/projects/${project.id}`}
-                        className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2.5 rounded-xl bg-[#EAF4F4] hover:bg-[#6B9080] text-[#1C2B24] hover:text-[#F6FFF8] border border-[#CCE3DE] hover:border-[#6B9080] transition-all flex-1 justify-center shadow-2xs group/btn"
-                      >
-                        <span>Lihat Detail Proyek</span>
-                        <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
-                      </Link>
-
-                      {project.githubUrl && (
-                        <a
-                          href={project.githubUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="p-2.5 rounded-xl bg-white hover:bg-[#EAF4F4] text-[#3D5449] hover:text-[#1C2B24] border border-[#CCE3DE] transition-colors shrink-0 shadow-2xs"
-                          aria-label="Repositori GitHub"
-                          title="Buka GitHub"
-                        >
-                          <GithubIcon className="w-4 h-4" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </motion.article>
+                {sub.label}
+              </button>
             ))}
-          </AnimatePresence>
-        </motion.div>
+          </div>
+        )}
+
+        {/* Project grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {filteredProjects.map((project, i) => (
+            <ProjectCard key={project.id} project={project} index={i} t={t} />
+          ))}
+        </div>
+
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-16 card">
+            <p className="text-sm text-[var(--fg-3)]">{t.projects.empty}</p>
+          </div>
+        )}
       </div>
     </section>
   );

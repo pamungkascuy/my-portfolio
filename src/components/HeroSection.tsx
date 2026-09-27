@@ -1,211 +1,198 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import {
-  ArrowDown,
-  FileDown,
-  Mail,
-  GraduationCap,
-  Sparkles,
-  CheckCircle,
-} from 'lucide-react';
-import { GithubIcon, LinkedinIcon } from '@/components/Icons';
-import {
-  FlutterLogo,
-  DartLogo,
-  LaravelLogo,
-  PythonLogo,
-  TypeScriptLogo,
-  ReactLogo,
-  MySQLLogo,
-  SupabaseLogo,
-  GoogleMLKitLogo,
-  DockerLogo,
-} from '@/components/TechLogos';
+import { ArrowRight, FileDown, MapPin } from 'lucide-react';
+import { GithubIcon, LinkedinIcon, WhatsappIcon } from '@/components/Icons';
+import { Mail } from 'lucide-react';
+import { useApp } from '@/context/AppContext';
+
+const fadeUp = (delay = 0) => ({
+  initial:    { opacity: 0, y: 18 },
+  animate:    { opacity: 1, y: 0  },
+  transition: { duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+});
 
 export default function HeroSection() {
-  const primaryTech = [
-    { name: 'Flutter', logo: <FlutterLogo className="w-5 h-5" />, role: 'Cross-platform Mobile' },
-    { name: 'Dart', logo: <DartLogo className="w-5 h-5" />, role: 'Language & Async' },
-    { name: 'Laravel', logo: <LaravelLogo className="w-5 h-5" />, role: 'Enterprise Backend' },
-    { name: 'Python', logo: <PythonLogo className="w-5 h-5" />, role: 'Computer Vision & AI' },
-    { name: 'TypeScript', logo: <TypeScriptLogo className="w-5 h-5" />, role: 'Type-safe Web' },
-    { name: 'React / Next', logo: <ReactLogo className="w-5 h-5" />, role: 'Dynamic Frontend' },
-    { name: 'MySQL', logo: <MySQLLogo className="w-5 h-5" />, role: 'Relational Database' },
-    { name: 'Supabase', logo: <SupabaseLogo className="w-5 h-5" />, role: 'BaaS & Realtime' },
-    { name: 'Google ML Kit', logo: <GoogleMLKitLogo className="w-5 h-5" />, role: 'Pose Estimation & ML' },
-    { name: 'Docker', logo: <DockerLogo className="w-5 h-5" />, role: 'Containerization' },
+  const { t } = useApp();
+
+  const stats = [
+    { value: '10+',  label: t.hero.stats.projects },
+    { value: '5',    label: t.hero.stats.certs    },
+    { value: '3.76', label: t.hero.stats.gpa      },
+  ];
+
+  const socials = [
+    { href: 'https://github.com/pamungkascuy',                           label: 'GitHub',    icon: <GithubIcon   className="w-4.5 h-4.5" />, hoverClass: 'hover:text-[var(--fg)]'    },
+    { href: 'https://www.linkedin.com/in/arif-pamungkas-2879a8367',      label: 'LinkedIn',  icon: <LinkedinIcon  className="w-4.5 h-4.5" />, hoverClass: 'hover:text-[#0A66C2]'    },
+    { href: 'https://wa.me/6282223578516',                               label: 'WhatsApp',  icon: <WhatsappIcon  className="w-4.5 h-4.5" />, hoverClass: 'hover:text-[#25D366]'    },
+    { href: 'mailto:arifpamungkas50@gmail.com',                          label: 'Email',     icon: <Mail          className="w-4.5 h-4.5" />, hoverClass: 'hover:text-[var(--fg)]'   },
   ];
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen pt-32 pb-20 flex items-center justify-center overflow-hidden bg-[#F6FFF8]"
+      className="relative min-h-screen flex flex-col justify-center pt-[3.75rem] overflow-hidden"
+      style={{ background: 'var(--bg)' }}
     >
-      {/* Subtle organic background warmth */}
-      <div className="absolute top-10 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-[#EAF4F4] blur-[120px] rounded-full pointer-events-none -z-10 opacity-70" />
-      <div className="absolute bottom-10 right-10 w-[400px] h-[300px] bg-[#CCE3DE] blur-[140px] rounded-full pointer-events-none -z-10 opacity-40" />
+      {/* Subtle radial gradient background accent */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'radial-gradient(ellipse 70% 50% at 60% 40%, var(--accent-glow) 0%, transparent 70%)',
+        }}
+      />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 w-full">
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Left Column: Headlines & Introduction */}
-          <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="lg:col-span-7 flex flex-col items-start text-left"
-          >
-            {/* Status Pill */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.1, duration: 0.4 }}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EAF4F4] border border-[#A4C3B2] text-[#3D5449] text-xs font-semibold mb-6 shadow-xs"
-            >
-              <span className="w-2 h-2 rounded-full bg-[#6B9080]" />
-              <span>Tersedia untuk Rekrutmen &amp; Proyek Freelance</span>
+      <div className="container-xl relative z-10">
+        <div className="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center min-h-[calc(100vh-3.75rem)] py-16 lg:py-0">
+
+          {/* ── Left: Text ── */}
+          <div className="lg:col-span-7 flex flex-col justify-center">
+
+            {/* Available badge */}
+            <motion.div {...fadeUp(0)} className="flex items-center gap-2 self-start mb-8">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-60" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent)]" />
+              </span>
+              <span className="text-xs text-[var(--fg-3)] font-medium tracking-wide">{t.hero.badge}</span>
             </motion.div>
 
-            {/* Main Greeting & Name */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#1C2B24] tracking-tight leading-[1.15] mb-4">
-              Arif Pamungkas
-            </h1>
+            {/* Name heading */}
+            <motion.h1
+              {...fadeUp(0.07)}
+              className="font-bold tracking-tight leading-[1.04] text-[var(--fg)] mb-4"
+              style={{ fontSize: 'clamp(2.75rem, 7vw, 4.5rem)' }}
+            >
+              Arif<br />
+              <span className="gradient-text">Pamungkas</span>
+            </motion.h1>
 
-            {/* Role Title */}
-            <div className="text-xl sm:text-2xl font-bold text-[#6B9080] mb-5 flex items-center gap-2.5">
-              <span className="w-8 h-[3px] bg-[#6B9080] rounded-full" />
-              <span>Fullstack Developer &amp; Mobile Engineer</span>
-            </div>
+            {/* Role */}
+            <motion.p
+              {...fadeUp(0.14)}
+              className="text-base sm:text-lg font-medium text-[var(--fg-2)] mb-5 tracking-wide"
+            >
+              {t.hero.role}
+            </motion.p>
 
-            {/* Description */}
-            <p className="text-[#3D5449] text-base sm:text-lg leading-relaxed max-w-2xl mb-8">
-              Membangun aplikasi mobile berstandar tinggi dengan <strong className="text-[#1C2B24]">Flutter &amp; Dart</strong>, arsitektur RESTful API yang tangguh dengan <strong className="text-[#1C2B24]">Laravel</strong>, serta integrasi <strong className="text-[#1C2B24]">Computer Vision (Google ML Kit &amp; Python)</strong> untuk menghadirkan solusi komputasi cerdas dan teruji di lapangan.
-            </p>
+            {/* Bio */}
+            <motion.p
+              {...fadeUp(0.2)}
+              className="text-[.9375rem] text-[var(--fg-3)] leading-relaxed mb-10 max-w-md"
+            >
+              {t.hero.bioBeforeHighlight1}
+              <strong className="text-[var(--fg-2)] font-semibold">{t.hero.bioHighlight1}</strong>
+              {t.hero.bioMiddle}
+              <strong className="text-[var(--fg-2)] font-semibold">{t.hero.bioHighlight2}</strong>
+              {t.hero.bioAfter}
+            </motion.p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-4 mb-10 w-full sm:w-auto">
-              <a
-                href="#projects"
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#6B9080] hover:bg-[#567668] text-[#F6FFF8] font-semibold shadow-md shadow-[#6B9080]/20 transition-all hover:scale-[1.02]"
-              >
-                <span>Lihat Portofolio</span>
-                <ArrowDown className="w-4 h-4" />
+            <motion.div {...fadeUp(0.26)} className="flex flex-wrap gap-3 mb-12">
+              <a href="/#projects" className="btn btn-primary">
+                {t.hero.viewProjects}
+                <ArrowRight className="w-4 h-4" />
               </a>
-
-              <a
-                href="/resume.pdf"
-                download
-                className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white hover:bg-[#EAF4F4] text-[#1C2B24] font-semibold border border-[#CCE3DE] hover:border-[#A4C3B2] transition-all shadow-xs"
-              >
-                <FileDown className="w-4 h-4 text-[#6B9080]" />
-                <span>Unduh CV (PDF)</span>
+              <a href="/resume.pdf" download className="btn btn-ghost">
+                <FileDown className="w-4 h-4" />
+                {t.hero.downloadCv}
               </a>
+            </motion.div>
 
-              <a
-                href="#contact"
-                className="inline-flex items-center justify-center px-5 py-3.5 rounded-xl text-[#3D5449] hover:text-[#1C2B24] hover:bg-[#EAF4F4]/80 text-sm font-semibold transition-colors"
-              >
-                Hubungi Saya
-              </a>
-            </div>
-
-            {/* Social Links */}
-            <div className="flex items-center gap-3 text-[#5E7A6D]">
-              <span className="text-xs font-semibold uppercase tracking-wider text-[#5E7A6D]">
-                Tautan:
-              </span>
-              <div className="flex items-center gap-2">
-                <a
-                  href="https://github.com/pamungkascuy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white border border-[#CCE3DE] text-[#3D5449] hover:text-[#1C2B24] hover:border-[#A4C3B2] transition-colors shadow-xs"
-                  aria-label="GitHub"
-                >
-                  <GithubIcon className="w-4 h-4" />
-                </a>
-                <a
-                  href="https://linkedin.com/in/arifpamungkas"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2.5 rounded-xl bg-white border border-[#CCE3DE] text-[#3D5449] hover:text-[#6B9080] hover:border-[#A4C3B2] transition-colors shadow-xs"
-                  aria-label="LinkedIn"
-                >
-                  <LinkedinIcon className="w-4 h-4" />
-                </a>
-                <a
-                  href="mailto:contact@arifpamungkas.dev"
-                  className="p-2.5 rounded-xl bg-white border border-[#CCE3DE] text-[#3D5449] hover:text-[#6B9080] hover:border-[#A4C3B2] transition-colors shadow-xs"
-                  aria-label="Email"
-                >
-                  <Mail className="w-4 h-4" />
-                </a>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right Column: Real Tech Stack & Verified Skills Showcase */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.98, y: 25 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="lg:col-span-5"
-          >
-            <div className="rounded-3xl bg-white border border-[#CCE3DE] p-6 sm:p-7 shadow-xl shadow-[#6B9080]/8 relative">
-              {/* Card Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-[#EAF4F4] mb-5">
-                <div>
-                  <h3 className="font-bold text-[#1C2B24] text-base">
-                    Tech Stack &amp; Tools Utama
-                  </h3>
-                  <p className="text-xs text-[#5E7A6D]">
-                    Alat dan teknologi yang dipakai dalam proyek produksi
-                  </p>
+            {/* Stats + Socials row */}
+            <motion.div
+              {...fadeUp(0.33)}
+              className="flex items-center gap-8 pt-7 border-t border-[var(--border)]"
+            >
+              {stats.map(({ value, label }) => (
+                <div key={label}>
+                  <p className="text-xl font-bold text-[var(--fg)] leading-none tracking-tight">{value}</p>
+                  <p className="text-[.6875rem] text-[var(--fg-4)] mt-1 uppercase tracking-wider">{label}</p>
                 </div>
-                <div className="p-2 rounded-xl bg-[#EAF4F4] text-[#6B9080]">
-                  <Sparkles className="w-4 h-4" />
-                </div>
-              </div>
+              ))}
 
-              {/* Grid of Real Brand Logos */}
-              <div className="grid grid-cols-2 gap-2.5 mb-6">
-                {primaryTech.map((tech) => (
-                  <div
-                    key={tech.name}
-                    className="p-2.5 rounded-xl bg-[#F6FFF8] border border-[#CCE3DE]/70 hover:border-[#A4C3B2] hover:bg-white transition-all flex items-center gap-3"
+              {/* Divider */}
+              <div className="w-px h-8 bg-[var(--border)] mx-1" />
+
+              {/* Socials */}
+              <div className="flex items-center gap-3.5 ml-auto">
+                {socials.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target={s.href.startsWith('mailto') ? undefined : '_blank'}
+                    rel="noopener noreferrer"
+                    aria-label={s.label}
+                    className={`text-[var(--fg-4)] ${s.hoverClass} transition-all hover:-translate-y-0.5`}
                   >
-                    <div className="w-8 h-8 rounded-lg bg-white border border-[#CCE3DE] flex items-center justify-center shrink-0 shadow-xs">
-                      {tech.logo}
-                    </div>
-                    <div className="overflow-hidden">
-                      <div className="text-xs font-bold text-[#1C2B24] truncate">
-                        {tech.name}
-                      </div>
-                      <div className="text-[10px] text-[#5E7A6D] truncate">
-                        {tech.role}
-                      </div>
-                    </div>
-                  </div>
+                    {s.icon}
+                  </a>
                 ))}
               </div>
+            </motion.div>
+          </div>
 
-              {/* Bottom Credential Footnote */}
-              <div className="p-3.5 rounded-2xl bg-[#EAF4F4] border border-[#CCE3DE] flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-white border border-[#A4C3B2] flex items-center justify-center text-[#6B9080] shrink-0">
-                  <GraduationCap className="w-5 h-5" />
+          {/* ── Right: Photo ── */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.96, y: 16 }}
+            animate={{ opacity: 1, scale: 1,    y: 0  }}
+            transition={{ duration: 0.7, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            className="hidden lg:flex lg:col-span-5 items-center justify-end"
+          >
+            <div className="relative group" style={{ width: '330px' }}>
+
+              {/* Glow ring behind photo */}
+              <div
+                aria-hidden="true"
+                className="absolute -inset-4 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: 'radial-gradient(ellipse at center, var(--accent-glow) 0%, transparent 70%)' }}
+              />
+
+              {/* Offset shadow card */}
+              <div
+                aria-hidden="true"
+                className="absolute -bottom-3 -right-3 w-full h-full rounded-2xl border border-[var(--accent-lt)] -z-10 transition-transform duration-400 ease-out group-hover:translate-x-1 group-hover:translate-y-1"
+              />
+
+              {/* Photo card */}
+              <div className="relative rounded-2xl overflow-hidden border border-[var(--border)] shadow-[var(--shadow-lg)]">
+                <div className="relative aspect-[4/5] overflow-hidden">
+                  <Image
+                    src="/profile/profile.webp"
+                    alt="Arif Pamungkas"
+                    fill
+                    sizes="330px"
+                    priority
+                    className="object-cover object-top transition-transform duration-500 group-hover:scale-[1.04]"
+                  />
+                  {/* Gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent z-10" />
                 </div>
-                <div>
-                  <div className="text-xs font-bold text-[#1C2B24]">
-                    D3 Teknik Informatika
-                  </div>
-                  <div className="text-[11px] text-[#5E7A6D]">
-                    Sertifikasi Resmi Big Data, MikroTik MTCNA, &amp; Oracle SQL
+
+                {/* Floating info card */}
+                <div className="absolute bottom-3 left-3 right-3 z-20">
+                  <div className="bg-[var(--surface)]/90 backdrop-blur-md rounded-xl px-4 py-2.5 border border-[var(--border)]/80 shadow-lg">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[.8125rem] font-semibold text-[var(--fg)]">Arif Pamungkas</p>
+                        <p className="text-[.6875rem] text-[var(--fg-3)] flex items-center gap-1 mt-0.5">
+                          <MapPin className="w-2.5 h-2.5 text-[var(--accent)]" />
+                          {t.hero.location}
+                        </p>
+                      </div>
+                      <span className="text-[.625rem] font-semibold text-[var(--accent)] bg-[var(--accent-lt)] px-2 py-1 rounded-lg leading-tight">
+                        {t.hero.openToWork}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </motion.div>
+
         </div>
       </div>
     </section>

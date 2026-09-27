@@ -1,187 +1,132 @@
 'use client';
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Wrench,
-  Smartphone,
-  Server,
-  Cpu,
-  Network,
-  Sparkles,
-  Layers,
-} from 'lucide-react';
-import { skillCategoriesData } from '@/data/skills';
+import { motion } from 'framer-motion';
+import { Smartphone, Server, Cpu, Wrench, Palette, Film } from 'lucide-react';
+import { getLocalizedSkillCategories } from '@/data/localizedData';
 import { getTechLogo } from '@/components/TechLogos';
+import { useApp } from '@/context/AppContext';
+
+const ICON_MAP: Record<string, React.ReactNode> = {
+  'mobile-frontend':    <Smartphone className="w-4 h-4" />,
+  'backend-database':   <Server     className="w-4 h-4" />,
+  'ai-computer-vision': <Cpu        className="w-4 h-4" />,
+  'design-graphics':    <Palette    className="w-4 h-4" />,
+  'video-editing':      <Film       className="w-4 h-4" />,
+  'tools-networking':   <Wrench     className="w-4 h-4" />,
+};
+
+const ACCENT_MAP: Record<string, { bg: string; text: string }> = {
+  'mobile-frontend':    { bg: 'bg-blue-500/10',    text: 'text-blue-500'   },
+  'backend-database':   { bg: 'bg-violet-500/10',  text: 'text-violet-500' },
+  'ai-computer-vision': { bg: 'bg-orange-500/10',  text: 'text-orange-500' },
+  'design-graphics':    { bg: 'bg-pink-500/10',    text: 'text-pink-500'   },
+  'video-editing':      { bg: 'bg-red-500/10',     text: 'text-red-500'    },
+  'tools-networking':   { bg: 'bg-teal-500/10',    text: 'text-teal-500'   },
+};
 
 export default function SkillsSection() {
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const { t, locale } = useApp();
+  const [selected, setSelected] = useState<string>('all');
 
-  const getCategoryIcon = (id: string) => {
-    switch (id) {
-      case 'mobile-frontend':
-        return <Smartphone className="w-5 h-5 text-[#6B9080]" />;
-      case 'backend-database':
-        return <Server className="w-5 h-5 text-[#6B9080]" />;
-      case 'ai-computer-vision':
-        return <Cpu className="w-5 h-5 text-[#6B9080]" />;
-      case 'tools-networking':
-        return <Network className="w-5 h-5 text-[#6B9080]" />;
-      default:
-        return <Wrench className="w-5 h-5 text-[#6B9080]" />;
-    }
+  const skillCategoriesData = getLocalizedSkillCategories(locale);
+
+  const visible = selected === 'all'
+    ? skillCategoriesData
+    : skillCategoriesData.filter((g) => g.id === selected);
+
+  const filterLabel = (g: typeof skillCategoriesData[number]) => {
+    if (g.id === 'design-graphics')    return t.skills.filterDesign;
+    if (g.id === 'video-editing')      return t.skills.filterVideo;
+    if (g.id === 'mobile-frontend')    return 'Frontend';
+    if (g.id === 'backend-database')   return 'Backend';
+    return g.title.split(' ')[0];
   };
 
-  const filteredCategories =
-    selectedCategory === 'all'
-      ? skillCategoriesData
-      : skillCategoriesData.filter((cat) => cat.id === selectedCategory);
-
   return (
-    <section id="skills" className="py-24 relative overflow-hidden bg-[#F6FFF8]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <section id="skills" className="py-24" style={{ background: 'var(--bg)' }}>
+      <div className="container-xl">
+
         {/* Header */}
-        <div className="flex flex-col items-center text-center mb-14">
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAF4F4] border border-[#A4C3B2] text-[#3D5449] text-xs font-semibold uppercase tracking-wider mb-3"
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#6B9080]" />
-            <span>Keahlian Teknis</span>
-          </motion.div>
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10">
+          <div>
+            <span className="label-tag">{t.skills.tag}</span>
+            <h2 className="section-heading mt-2">{t.skills.heading}</h2>
+          </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-3xl sm:text-4xl font-extrabold text-[#1C2B24] tracking-tight"
-          >
-            Ekosistem Teknologi &amp; Penguasaan Alat
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-[#5E7A6D] max-w-2xl text-sm sm:text-base mt-3"
-          >
-            Teknologi resmi dan bahasa pemrograman yang saya gunakan secara aktif untuk merancang, membangun, dan memelihara aplikasi berkinerja tinggi.
-          </motion.p>
-        </div>
-
-        {/* Filter Pills */}
-        <div className="flex items-center justify-center gap-2 flex-wrap mb-12">
-          <button
-            onClick={() => setSelectedCategory('all')}
-            className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
-              selectedCategory === 'all'
-                ? 'bg-[#6B9080] text-[#F6FFF8] shadow-sm shadow-[#6B9080]/25 scale-105'
-                : 'bg-white text-[#3D5449] hover:text-[#1C2B24] border border-[#CCE3DE] hover:border-[#A4C3B2]'
-            }`}
-          >
-            Semua Bidang
-          </button>
-          {skillCategoriesData.map((category) => (
+          {/* Filter chips */}
+          <div className="flex items-center gap-1.5 flex-wrap">
             <button
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 ${
-                selectedCategory === category.id
-                  ? 'bg-[#6B9080] text-[#F6FFF8] shadow-sm shadow-[#6B9080]/25 scale-105'
-                  : 'bg-white text-[#3D5449] hover:text-[#1C2B24] border border-[#CCE3DE] hover:border-[#A4C3B2]'
+              onClick={() => setSelected('all')}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                selected === 'all'
+                  ? 'bg-[var(--fg)] text-[var(--bg)] border-[var(--fg)]'
+                  : 'bg-transparent text-[var(--fg-3)] border-[var(--border)] hover:text-[var(--fg)] hover:border-[var(--border-2)]'
               }`}
             >
-              {category.title.split(' ')[0]}
+              {t.skills.filterAll}
             </button>
-          ))}
+            {skillCategoriesData.map((g) => (
+              <button
+                key={g.id}
+                onClick={() => setSelected(g.id)}
+                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+                  selected === g.id
+                    ? 'bg-[var(--fg)] text-[var(--bg)] border-[var(--fg)]'
+                    : 'bg-transparent text-[var(--fg-3)] border-[var(--border)] hover:text-[var(--fg)] hover:border-[var(--border-2)]'
+                }`}
+              >
+                {filterLabel(g)}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* Categories Grid */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedCategory}
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -15 }}
-            transition={{ duration: 0.3 }}
-            className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6"
-          >
-            {filteredCategories.map((group) => (
+        {/* Grid */}
+        <div className="grid sm:grid-cols-2 gap-5">
+          {visible.map((group, i) => {
+            const colors = ACCENT_MAP[group.id] ?? { bg: 'bg-[var(--accent-lt)]', text: 'text-[var(--accent)]' };
+            return (
               <motion.div
                 key={group.id}
-                whileHover={{ y: -3 }}
-                transition={{ duration: 0.2 }}
-                className="bg-white border border-[#CCE3DE] rounded-3xl p-6 sm:p-7 hover:border-[#A4C3B2] transition-all shadow-sm group relative overflow-hidden"
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, delay: i * 0.06 }}
+                className="card p-6 hover:border-[var(--border-2)] group"
               >
-                <div className="flex items-center gap-3.5 mb-3">
-                  <div className="p-3 rounded-2xl bg-[#EAF4F4] border border-[#CCE3DE]">
-                    {getCategoryIcon(group.id)}
+                {/* Category header */}
+                <div className="flex items-center gap-3 mb-4">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${colors.bg} ${colors.text}`}>
+                    {ICON_MAP[group.id] ?? <Wrench className="w-4 h-4" />}
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-[#1C2B24] group-hover:text-[#6B9080] transition-colors">
-                      {group.title}
-                    </h3>
-                    <p className="text-xs text-[#5E7A6D]">{group.description}</p>
+                    <h3 className="text-sm font-semibold text-[var(--fg)] leading-tight">{group.title}</h3>
+                    <p className="text-[.6875rem] text-[var(--fg-4)] mt-0.5">{group.description}</p>
                   </div>
                 </div>
 
-                {/* Skills Badges with Authentic Logos */}
-                <div className="flex flex-wrap gap-2.5 pt-4 border-t border-[#EAF4F4] mt-4">
+                {/* Divider */}
+                <div className="h-px bg-[var(--border)] mb-4" />
+
+                {/* Skills */}
+                <div className="flex flex-wrap gap-1.5">
                   {group.skills.map((skill) => {
-                    const logoNode = getTechLogo(skill.name, 'w-4 h-4 shrink-0');
+                    const logo = getTechLogo(skill.name, 'w-3.5 h-3.5 shrink-0');
                     return (
-                      <div
-                        key={skill.name}
-                        className="inline-flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-[#F6FFF8] border border-[#CCE3DE] text-[#1C2B24] hover:bg-white hover:border-[#A4C3B2] transition-all text-xs font-semibold shadow-2xs"
-                      >
-                        {logoNode ? (
-                          <span className="flex items-center justify-center">
-                            {logoNode}
-                          </span>
-                        ) : (
-                          <span className="w-2 h-2 rounded-full bg-[#6B9080]" />
-                        )}
+                      <div key={skill.name} className="skill-pill">
+                        {logo ?? <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] shrink-0" />}
                         <span>{skill.name}</span>
                         {skill.level === 'Expert' && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-md bg-[#EAF4F4] text-[#3D5449] font-mono border border-[#CCE3DE]">
-                            Expert
-                          </span>
+                          <span className="text-[9px] font-mono text-[var(--accent)] leading-none">★</span>
                         )}
                       </div>
                     );
                   })}
                 </div>
               </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Bottom Banner */}
-        <div className="mt-14 p-6 sm:p-8 rounded-3xl bg-white border border-[#CCE3DE] flex flex-col sm:flex-row items-center justify-between gap-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-2xl bg-[#EAF4F4] text-[#6B9080] border border-[#CCE3DE] flex items-center justify-center shrink-0">
-              <Layers className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="text-base font-bold text-[#1C2B24]">
-                Arsitektur Modern &amp; Pengalaman Produksi Nyata
-              </h4>
-              <p className="text-xs sm:text-sm text-[#5E7A6D] mt-0.5">
-                Mengutamakan stabilitas kode, skalabilitas endpoint backend, dan responsivitas antarmuka mobile.
-              </p>
-            </div>
-          </div>
-          <a
-            href="#projects"
-            className="shrink-0 px-5 py-2.5 rounded-xl bg-[#6B9080] hover:bg-[#567668] text-[#F6FFF8] font-semibold text-xs sm:text-sm shadow-sm transition-all"
-          >
-            Lihat Implementasi Proyek
-          </a>
+            );
+          })}
         </div>
       </div>
     </section>
