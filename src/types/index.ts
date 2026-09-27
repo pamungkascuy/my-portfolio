@@ -44,7 +44,7 @@ export interface Certification {
   badgeText: string;
   description: string;
   image: string;
-  pdfUrl: string;
+  pdfUrl?: string;
 }
 
 export interface WorkExperience {

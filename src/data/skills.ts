@@ -10,7 +10,6 @@ export const certificationsData: Certification[] = [
     description:
       'Pengakuan resmi penyelesaian program magang/praktik kerja lapangan sebagai Full-Stack Developer dalam pengembangan aplikasi web dan mobile (Propaktani).',
     image: '/certificates/cert-magang.webp',
-    pdfUrl: '/certificates/cert-magang.webp',
   },
   {
     id: 'solusi247-big-data',
@@ -21,7 +20,6 @@ export const certificationsData: Certification[] = [
     description:
       'Sertifikasi kompetensi dalam analisis data skala besar, pengolahan pipeline data analitik, dan visualisasi pemrosesan Big Data.',
     image: '/certificates/cert-big-data.png',
-    pdfUrl: '/SCA511-2508-260810241-Arif Pamungkas.pdf',
   },
   {
     id: 'mikrotik-mtcna',
@@ -32,7 +30,6 @@ export const certificationsData: Certification[] = [
     description:
       'Sertifikasi kompetensi resmi dalam konfigurasi routerboard MikroTik, manajemen bandwidth, firewall filter, routing, dan hotspot management.',
     image: '/certificates/cert-mtcna.png',
-    pdfUrl: '/SERTIFIKAT MIKROTIK_2.pdf',
   },
   {
     id: 'oracle-database-design',
@@ -43,7 +40,6 @@ export const certificationsData: Certification[] = [
     description:
       'Kompetensi pemodelan basis data relasional kompleks, entity relationship diagram (ERD), serta normalisasi skema tingkat lanjut.',
     image: '/certificates/cert-database-design.png',
-    pdfUrl: '/Certificate DD Database Design Learner_3.pdf',
   },
   {
     id: 'oracle-programming-sql',
@@ -54,7 +50,6 @@ export const certificationsData: Certification[] = [
     description:
       'Pemrograman query SQL relasional mendalam, optimasi indeks tabel, fungsi agregat, dan transaksi basis data standar enterprise.',
     image: '/certificates/cert-database-sql.png',
-    pdfUrl: '/Certificate Database Programming wIth SQL_3.pdf',
   },
 ];
 
