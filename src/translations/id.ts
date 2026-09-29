@@ -29,7 +29,7 @@ export const id = {
       gpa: 'IPK',
     },
     openToWork: 'Open to work',
-    location: 'Semarang, Indonesia',
+    location: 'Kendal, Jawa Tengah',
   },
   about: {
     tag: 'Tentang Saya',
@@ -141,7 +141,7 @@ export const id = {
     description:
       'Tertarik bekerja sama atau ingin mendiskusikan peluang proyek? Jangan ragu untuk menghubungi saya melalui saluran kontak langsung di bawah ini. Saya siap merespons dengan cepat.',
     availability: 'Tersedia untuk Posisi Full-Time & Proyek Freelance',
-    location: 'Semarang, Indonesia (WIB / GMT+7) — Terbuka untuk Remote',
+    location: 'Kendal, Jawa Tengah (WIB / GMT+7) — Terbuka untuk Remote',
     cards: {
       email: {
         badge: 'Email Utama',

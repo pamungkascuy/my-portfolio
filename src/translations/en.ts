@@ -31,7 +31,7 @@ export const en: Translations = {
       gpa: 'GPA',
     },
     openToWork: 'Open to work',
-    location: 'Semarang, Indonesia',
+    location: 'Kendal, Central Java',
   },
   about: {
     tag: 'About Me',
@@ -143,7 +143,7 @@ export const en: Translations = {
     description:
       'Interested in collaborating or discussing potential project opportunities? Feel free to reach out directly through any of the channels below. I will get back to you promptly.',
     availability: 'Available for Full-Time Positions & Freelance Projects',
-    location: 'Semarang, Indonesia (WIB / GMT+7) — Open to Remote Work',
+    location: 'Kendal, Central Java (WIB / GMT+7) — Open to Remote Work',
     cards: {
       email: {
         badge: 'Primary Email',
