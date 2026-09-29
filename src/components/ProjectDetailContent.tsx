@@ -115,17 +115,6 @@ export default function ProjectDetailContent({ projectId }: ProjectDetailContent
               {t.projectDetail.githubRepo}
             </a>
           )}
-          {project.liveDemoUrl && !project.figmaUrl && !project.videoUrl && (
-            <a
-              href={project.liveDemoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn btn-ghost"
-            >
-              {t.projectDetail.liveDemo}
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-          )}
         </div>
       </div>
 
